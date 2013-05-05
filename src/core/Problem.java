@@ -1,19 +1,19 @@
 package core;
 
-//ProblemÀà¶¨ÒåÁËÒ»¸öTSPËùĞèÒªµÄĞÅÏ¢£¬¼´µã¼¯ºÍ¾àÀë¾ØÕó
+//Problemç±»å®šä¹‰äº†ä¸€ä¸ªTSPæ‰€éœ€è¦çš„ä¿¡æ¯ï¼Œå³ç‚¹é›†å’Œè·ç¦»çŸ©é˜µ
 public class Problem {
-	public int num;
-	public Point[] points;
-	public double[][] distance;
+	public int num; //ç‚¹çš„æ•°ç›®
+	public Point[] points; //ç‚¹é›†
+	public double[][] distance; //è·ç¦»çŸ©é˜µ
 	
-	//¹¹Ôìº¯Êı£¬¸ù¾İµãµÄÊıÄ¿ºÍÔÚ×ø±êÏµÖĞµÄ·¶Î§£¬Ëæ»úÉú³ÉTSP
+	//æ„é€ å‡½æ•°ï¼Œæ ¹æ®ç‚¹çš„æ•°ç›®å’Œåœ¨åæ ‡ç³»ä¸­çš„èŒƒå›´ï¼Œéšæœºç”ŸæˆTSP
 	public Problem(int num, double xl, double xu, double yl, double yu) {
 		this.num = num;
 		generatePoints(xl, xu, yl, yu);
 		getDistanceMatrix();
 	}
 	
-	//Ëæ»úÉú³Éµã¼¯
+	//éšæœºç”Ÿæˆç‚¹é›†
 	private void generatePoints(double xl, double xu, double yl, double yu) {
 		points = new Point[num];
 		for(int i = 0; i < num; i++) {
@@ -21,7 +21,7 @@ public class Problem {
 		}
 	}
 	
-	//¼ÆËãµã¼¯ÖĞÃ¿Á½µãÖ®¼äµÄ¾àÀë²¢´æÈë¾àÀë¾ØÕó
+	//è®¡ç®—ç‚¹é›†ä¸­æ¯ä¸¤ç‚¹ä¹‹é—´çš„è·ç¦»å¹¶å­˜å…¥è·ç¦»çŸ©é˜µ
 	private void getDistanceMatrix() {
 		distance = new double[num][num];
 		for(int i = 0; i < num; i++) {
@@ -31,7 +31,7 @@ public class Problem {
 		}
 	}
 	
-	//·µ»Ø¸ø¶¨Á½µãÖ®¼äµÄ¾àÀë
+	//è¿”å›ç»™å®šä¸¤ç‚¹ä¹‹é—´çš„è·ç¦»
 	private double getDistance(Point p1, Point p2) {
 		return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 	}
