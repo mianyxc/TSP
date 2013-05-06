@@ -1,9 +1,9 @@
 package core;
 
 public class TSP {
-	Problem problem;
-	Solution optimalSolution;
-	Solution playerSolution;
+	public Problem problem;
+	public Solution optimalSolution;
+	public Solution playerSolution;
 	
 	public TSP(int num, double xl, double xu, double yl, double yu) {
 		problem = new Problem(num, xl, xu, yl, yu);
