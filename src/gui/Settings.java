@@ -18,4 +18,6 @@ public class Settings {
 	public static final Integer[] alternativeNums = {10, 15, 20, 25, 30};
 	
 	public static final int POINTRADIUS = 7;
+	
+	public static final double IDENTIFYRADIUS = 30;
 }

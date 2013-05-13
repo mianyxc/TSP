@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -56,14 +57,22 @@ public class GraphicPanel extends JPanel implements MouseListener {
 				for(int i = 0; i < optimalOrder.size() - 1; i++) {
 					Point original = tsp.problem.points[optimalOrder.get(i)];
 					Point destination = tsp.problem.points[optimalOrder.get(i + 1)];
-					drawLine(original, destination);
+					drawLine(original, destination, Color.GREEN);
 				}
+			}
+			ArrayList<Integer> playerOrder = tsp.playerSolution.order;
+			for(int i = 0; i < playerOrder.size() - 1; i++) {
+				Point original = tsp.problem.points[playerOrder.get(i)];
+				Point destination = tsp.problem.points[playerOrder.get(i + 1)];
+				drawLine(original, destination, Color.BLACK);
 			}
 		}
 	}
 	
-	private void drawLine(Point original, Point destination) {
-		gg.draw((Shape) new Line2D.Double(original.x, original.y, destination.x, destination.y));
+	private void drawLine(Point original, Point destination, Color color) {
+		Shape line = new Line2D.Double(original.x, original.y, destination.x, destination.y);
+		gg.setColor(color);
+		gg.draw(line);
 	}
 	
 	private void drawPoint(Point p) {
