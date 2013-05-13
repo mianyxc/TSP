@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import solver.CplexSolver;
+
 import core.TSP;
 
 //程序主界面
@@ -46,11 +48,8 @@ public class MainFrame {
 		rightPanel.setVisible(true);
 		topPanel.add(rightPanel);
 		
-		tsp = new TSP(10, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
+		tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
 		gamePanel = new GraphicPanel(tsp);
-		//gamePanel.setPreferredSize(new Dimension(Settings.GAME_WIDTH, Settings.GAME_HEIGHT));
-		//gamePanel.setBackground(Color.WHITE);
-		//gamePanel.setVisible(true);
 		rightPanel.add(gamePanel);
 		
 		infoPanel = new JPanel();
@@ -81,6 +80,7 @@ public class MainFrame {
 	}
 	
 	public static void main(String[] args) {
-		new MainFrame();
+		MainFrame mainFrame = new MainFrame();
+		System.out.println(mainFrame.tsp.optimalSolution.totalCost);
 	}
 }

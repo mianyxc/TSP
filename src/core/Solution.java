@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //Solution类定义了可能的解（即遍历顺序），包括游戏进行过程中不完整的解
 public class Solution {
@@ -16,10 +17,13 @@ public class Solution {
 	}
 	
 	//构造现有的解
-	public Solution(Problem problem, ArrayList<Integer> order) {
+	public Solution(Problem problem, int[] order) {
 		this.problem = problem;
-		this.order = new ArrayList<Integer>(order); //不确定这个构造函数是不是深拷贝？
-		this.totalCost = getCost();
+		this.order = new ArrayList<Integer>(this.problem.num + 1);
+		for(int i = 0; i < this.problem.num; i++) {
+			this.order.add(order[i]);
+		}
+		refreshCost();
 	}
 	
 	//计算总成本
