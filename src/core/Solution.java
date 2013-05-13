@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 //Solution类定义了可能的解（即遍历顺序），包括游戏进行过程中不完整的解
 public class Solution {
@@ -23,6 +22,7 @@ public class Solution {
 		for(int i = 0; i < this.problem.num; i++) {
 			this.order.add(order[i]);
 		}
+		this.order.add(order[0]);
 		refreshCost();
 	}
 	
@@ -51,6 +51,10 @@ public class Solution {
 				if(x == pointIndex) {
 					return false;
 				}
+			}
+		} else {
+			if(pointIndex != order.get(0)) {
+				return false;
 			}
 		}
 		order.add(pointIndex);

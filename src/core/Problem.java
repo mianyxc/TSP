@@ -1,5 +1,7 @@
 package core;
 
+import gui.Settings;
+
 //Problem类定义了一个TSP所需要的信息，即点集和距离矩阵
 public class Problem {
 	public int num; //点的数目

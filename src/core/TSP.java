@@ -1,7 +1,5 @@
 package core;
 
-import java.util.Arrays;
-
 import solver.CplexSolver;
 
 public class TSP {
@@ -14,6 +12,10 @@ public class TSP {
 		playerSolution = new Solution(problem);
 		CplexSolver solver = new CplexSolver(num, problem.distance);
 		optimalSolution = new Solution(problem, solver.order);
+	}
+	
+	public TSP() {
+		this(0, 0, 0, 0, 0);
 	}
 	
 	public boolean add(int pointIndex) {

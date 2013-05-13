@@ -18,7 +18,8 @@ import core.TSP;
 //程序主界面
 public class MainFrame {
 	JFrame frame;
-	JPanel topPanel, leftPanel, rightPanel, gamePanel, infoPanel, numControl;
+	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl;
+	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum;
 	JButton generate;
 	
@@ -48,8 +49,8 @@ public class MainFrame {
 		rightPanel.setVisible(true);
 		topPanel.add(rightPanel);
 		
-		tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
-		gamePanel = new GraphicPanel(tsp);
+		//tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
+		gamePanel = new GraphicPanel();
 		rightPanel.add(gamePanel);
 		
 		infoPanel = new JPanel();
@@ -70,8 +71,8 @@ public class MainFrame {
 		leftPanel.add(generate);
 		generate.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				//tsp = new TSP((int) chooseNum.getSelectedItem(), 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
-				
+				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.POINTRADIUS, Settings.GAME_WIDTH - Settings.POINTRADIUS, Settings.POINTRADIUS, Settings.GAME_HEIGHT - Settings.POINTRADIUS);
+				gamePanel.setTSP(tsp);
 			}
 		});
 		
@@ -81,6 +82,6 @@ public class MainFrame {
 	
 	public static void main(String[] args) {
 		MainFrame mainFrame = new MainFrame();
-		System.out.println(mainFrame.tsp.optimalSolution.totalCost);
+		//System.out.println(mainFrame.tsp.optimalSolution.totalCost);
 	}
 }
