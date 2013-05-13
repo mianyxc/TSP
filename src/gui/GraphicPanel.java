@@ -21,7 +21,7 @@ public class GraphicPanel extends JPanel implements MouseListener {
 	boolean showOptimal;
 	
 	public GraphicPanel(TSP tsp) {
-		showOptimal = true;
+		showOptimal = false;
 		this.tsp = tsp;
 		setPreferredSize(new Dimension(Settings.GAME_WIDTH, Settings.GAME_HEIGHT));
 		repaint();
@@ -33,6 +33,11 @@ public class GraphicPanel extends JPanel implements MouseListener {
 	
 	public void setTSP(TSP tsp) {
 		this.tsp = tsp;
+		repaint();
+	}
+	
+	public void toggleShowOptimal() {
+		showOptimal = !showOptimal;
 		repaint();
 	}
 	

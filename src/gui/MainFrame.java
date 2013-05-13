@@ -21,7 +21,7 @@ public class MainFrame {
 	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl;
 	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum;
-	JButton generate;
+	JButton generate, showOptimal;
 	
 	TSP tsp;
 	
@@ -73,6 +73,14 @@ public class MainFrame {
 			public void mouseClicked(MouseEvent e) {
 				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.POINTRADIUS, Settings.GAME_WIDTH - Settings.POINTRADIUS, Settings.POINTRADIUS, Settings.GAME_HEIGHT - Settings.POINTRADIUS);
 				gamePanel.setTSP(tsp);
+			}
+		});
+		
+		showOptimal = new JButton("显示/隐藏最优路径");
+		leftPanel.add(showOptimal);
+		showOptimal.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				gamePanel.toggleShowOptimal();
 			}
 		});
 		
