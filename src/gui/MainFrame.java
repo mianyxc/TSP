@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 import solver.CplexSolver;
 
+import core.Point;
 import core.TSP;
 
 //程序主界面
@@ -22,6 +23,7 @@ public class MainFrame {
 	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum;
 	JButton generate, showOptimal;
+	JLabel optimalCost, playerCost, difference;
 	
 	TSP tsp;
 	
@@ -55,9 +57,16 @@ public class MainFrame {
 		
 		infoPanel = new JPanel();
 		infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		//infoPanel.setBackground(Color.CYAN);
 		infoPanel.setVisible(true);
 		rightPanel.add(infoPanel);
+		optimalCost = new JLabel();
+		playerCost = new JLabel();
+		difference = new JLabel();
+		infoPanel.add(optimalCost);
+		infoPanel.add(playerCost);
+		infoPanel.add(difference);
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
@@ -73,6 +82,7 @@ public class MainFrame {
 			public void mouseClicked(MouseEvent e) {
 				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.POINTRADIUS, Settings.GAME_WIDTH - Settings.POINTRADIUS, Settings.POINTRADIUS, Settings.GAME_HEIGHT - Settings.POINTRADIUS);
 				gamePanel.setTSP(tsp);
+				refreshInfo();
 			}
 		});
 		
@@ -84,8 +94,46 @@ public class MainFrame {
 			}
 		});
 		
+		gamePanel.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				//System.out.println("Mouse clicked.");
+				if(e.getButton() == MouseEvent.BUTTON1) {
+					double x = e.getX();
+					double y = e.getY();
+					tsp.add(findPoint(x, y));
+				}
+				if(e.getButton() == MouseEvent.BUTTON3) {
+					tsp.remove();
+				}
+				refreshInfo();
+				gamePanel.repaint();
+			}
+		});
+		
+		
 		
 		frame.setVisible(true);
+	}
+	
+	private int findPoint(double x, double y) {
+		double min = Settings.IDENTIFYRADIUS;
+		int minIndex = -1;
+		Point[] points = tsp.problem.points;
+		for(int i = 0; i < tsp.problem.num; i++) {
+			Point p = points[i];
+			double distance = Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2));
+			if(distance < min) {
+				min = distance;
+				minIndex = i;
+			}
+		}
+		return minIndex;
+	}
+	
+	public void refreshInfo() {
+		optimalCost.setText("最优解：" + tsp.optimalSolution.totalCost);
+		playerCost.setText("当前解：" + tsp.playerSolution.totalCost);
+		difference.setText("百分比：" + tsp.playerSolution.totalCost / tsp.optimalSolution.totalCost);
 	}
 	
 	public static void main(String[] args) {
