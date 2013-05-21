@@ -7,8 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -25,6 +25,7 @@ public class GraphicPanel extends JPanel implements MouseListener {
 		showOptimal = false;
 		this.tsp = tsp;
 		setPreferredSize(new Dimension(Settings.GAME_WIDTH, Settings.GAME_HEIGHT));
+		setBackground(Color.WHITE);
 		repaint();
 	}
 	
@@ -76,7 +77,7 @@ public class GraphicPanel extends JPanel implements MouseListener {
 	}
 	
 	private void drawPoint(Point p) {
-		gg.fill((Shape) new Ellipse2D.Double(p.x, p.y, Settings.POINTRADIUS, Settings.POINTRADIUS));
+		gg.fill((Shape) new Rectangle2D.Double(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS));
 	}
 
 	@Override

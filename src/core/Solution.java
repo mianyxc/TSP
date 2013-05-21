@@ -18,6 +18,7 @@ public class Solution {
 	//构造现有的解
 	public Solution(Problem problem, int[] order) {
 		this.problem = problem;
+		//深拷贝
 		this.order = new ArrayList<Integer>(this.problem.num + 1);
 		for(int i = 0; i < this.problem.num; i++) {
 			this.order.add(order[i]);
@@ -35,12 +36,14 @@ public class Solution {
 		return cost;
 	}
 	
+	//重新计算总成本
 	private void refreshCost() {
 		totalCost = getCost();
 	}
 	
 	//向当前解中添加一个点
 	public boolean add(int pointIndex) {
+		/*
 		//检查数据合法性
 		if(pointIndex >= problem.num || pointIndex < 0) {
 			return false;
@@ -57,6 +60,11 @@ public class Solution {
 				return false;
 			}
 		}
+		*/
+		//不检查数据合法性
+		if(!order.isEmpty()){
+			if(pointIndex == order.get(order.size() - 1)) return false;
+		}
 		order.add(pointIndex);
 		refreshCost();
 		return true;
@@ -70,5 +78,10 @@ public class Solution {
 			refreshCost();
 			return true;
 		}
+	}
+	
+	//清除当前解
+	public void removeAll() {
+		order.clear();
 	}
 }

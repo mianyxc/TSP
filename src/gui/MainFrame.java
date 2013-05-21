@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,7 +23,7 @@ public class MainFrame {
 	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl;
 	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum;
-	JButton generate, showOptimal;
+	JButton generate, showOptimal, rollback, clear;
 	JLabel optimalCost, playerCost, difference;
 	
 	TSP tsp;
@@ -41,32 +42,20 @@ public class MainFrame {
 		
 		leftPanel = new JPanel();
 		leftPanel.setPreferredSize(new Dimension(Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT));
+		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		//leftPanel.setBackground(Color.WHITE);
 		leftPanel.setVisible(true);
 		topPanel.add(leftPanel);
 		
 		rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
-		//rightPanel.setBackground(Color.WHITE);
+		rightPanel.setBackground(Color.WHITE);
 		rightPanel.setVisible(true);
 		topPanel.add(rightPanel);
 		
 		//tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
 		gamePanel = new GraphicPanel();
 		rightPanel.add(gamePanel);
-		
-		infoPanel = new JPanel();
-		infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
-		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		//infoPanel.setBackground(Color.CYAN);
-		infoPanel.setVisible(true);
-		rightPanel.add(infoPanel);
-		optimalCost = new JLabel();
-		playerCost = new JLabel();
-		difference = new JLabel();
-		infoPanel.add(optimalCost);
-		infoPanel.add(playerCost);
-		infoPanel.add(difference);
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
@@ -76,23 +65,60 @@ public class MainFrame {
 		numControl.add(chooseNum);
 		leftPanel.add(numControl);
 		
-		generate = new JButton("生成");
+		generate = new JButton("生成问题");
 		leftPanel.add(generate);
+		generate.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		generate.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.POINTRADIUS, Settings.GAME_WIDTH - Settings.POINTRADIUS, Settings.POINTRADIUS, Settings.GAME_HEIGHT - Settings.POINTRADIUS);
+				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
 				gamePanel.setTSP(tsp);
 				refreshInfo();
 			}
 		});
 		
 		showOptimal = new JButton("显示/隐藏最优路径");
+		showOptimal.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		leftPanel.add(showOptimal);
 		showOptimal.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
 				gamePanel.toggleShowOptimal();
 			}
 		});
+		
+		rollback = new JButton("撤销");
+		rollback.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
+		leftPanel.add(rollback);
+		rollback.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				tsp.remove();
+				refreshInfo();
+				gamePanel.repaint();
+			}
+		});
+		
+		clear = new JButton("清除");
+		clear.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
+		leftPanel.add(clear);
+		clear.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				tsp.removeAll();
+				refreshInfo();
+				gamePanel.repaint();
+			}
+		});
+		
+		infoPanel = new JPanel();
+		infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		//infoPanel.setBackground(Color.CYAN);
+		infoPanel.setVisible(true);
+		leftPanel.add(infoPanel);
+		optimalCost = new JLabel();
+		playerCost = new JLabel();
+		difference = new JLabel();
+		infoPanel.add(optimalCost);
+		infoPanel.add(playerCost);
+		infoPanel.add(difference);
 		
 		gamePanel.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -109,7 +135,9 @@ public class MainFrame {
 				gamePanel.repaint();
 			}
 		});
-		
+		tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
+		gamePanel.setTSP(tsp);
+		refreshInfo();
 		
 		
 		frame.setVisible(true);
@@ -131,13 +159,18 @@ public class MainFrame {
 	}
 	
 	public void refreshInfo() {
-		optimalCost.setText("最优解：" + tsp.optimalSolution.totalCost);
-		playerCost.setText("当前解：" + tsp.playerSolution.totalCost);
-		difference.setText("百分比：" + tsp.playerSolution.totalCost / tsp.optimalSolution.totalCost);
+		optimalCost.setText("最优解：" + format(tsp.optimalSolution.totalCost, 2));
+		playerCost.setText("当前解：" + format(tsp.playerSolution.totalCost, 2));
+		difference.setText("百分比：" + format(tsp.playerSolution.totalCost / tsp.optimalSolution.totalCost * 100, 2) + "%");
 	}
 	
 	public static void main(String[] args) {
-		MainFrame mainFrame = new MainFrame();
+		new MainFrame();
 		//System.out.println(mainFrame.tsp.optimalSolution.totalCost);
 	}
+	
+	private double format(double x, int n) {
+		return Math.round(x * Math.pow(10,n))/Math.pow(10, n);
+	}
+
 }

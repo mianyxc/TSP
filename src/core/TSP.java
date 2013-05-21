@@ -25,4 +25,8 @@ public class TSP {
 	public boolean remove() {
 		return playerSolution.remove();
 	}
+	
+	public void removeAll() {
+		playerSolution.removeAll();
+	}
 }
