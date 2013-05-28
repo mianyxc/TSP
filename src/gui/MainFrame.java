@@ -1,7 +1,9 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
@@ -66,6 +68,9 @@ public class MainFrame {
 		numControl.add(new JLabel("选择问题规模"));
 		numControl.add(chooseNum);
 		leftPanel.add(numControl);
+		for(Component c: numControl.getComponents()) {
+			c.setFont(Settings.font);
+		}
 		
 		generate = new JButton("生成问题");
 		leftPanel.add(generate);
@@ -79,6 +84,7 @@ public class MainFrame {
 		});
 		
 		showOptimal = new JButton("显示/隐藏最优路径");
+		//showOptimal.setFont(Settings.font);
 		showOptimal.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		leftPanel.add(showOptimal);
 		showOptimal.addMouseListener(new MouseAdapter(){
@@ -87,7 +93,7 @@ public class MainFrame {
 			}
 		});
 		
-		rollback = new JButton("撤销");
+		rollback = new JButton("撤销一步");
 		rollback.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		leftPanel.add(rollback);
 		rollback.addMouseListener(new MouseAdapter(){
@@ -98,7 +104,7 @@ public class MainFrame {
 			}
 		});
 		
-		clear = new JButton("清除");
+		clear = new JButton("全部清除");
 		clear.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		leftPanel.add(clear);
 		clear.addMouseListener(new MouseAdapter(){
@@ -121,9 +127,12 @@ public class MainFrame {
 		infoPanel.add(optimalCost);
 		infoPanel.add(playerCost);
 		infoPanel.add(difference);
+		for(Component c: infoPanel.getComponents()) {
+			c.setFont(Settings.font);
+		}
 		
 		gamePanel.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				//System.out.println("Mouse clicked.");
 				if(e.getButton() == MouseEvent.BUTTON1) {
 					double x = e.getX();
@@ -141,6 +150,9 @@ public class MainFrame {
 		gamePanel.setTSP(tsp);
 		refreshInfo();
 		
+		for(Component c: leftPanel.getComponents()) {
+			c.setFont(Settings.font);
+		}
 		
 		frame.setVisible(true);
 	}
@@ -157,6 +169,7 @@ public class MainFrame {
 				minIndex = i;
 			}
 		}
+		//System.out.println(minIndex);
 		return minIndex;
 	}
 	

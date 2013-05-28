@@ -8,10 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -19,7 +16,7 @@ import javax.swing.JPanel;
 import core.Point;
 import core.TSP;
 
-public class GraphicPanel extends JPanel implements MouseListener {
+public class GraphicPanel extends JPanel{
 	TSP tsp;
 	Graphics2D gg;
 	boolean showOptimal;
@@ -87,39 +84,15 @@ public class GraphicPanel extends JPanel implements MouseListener {
 	}
 	
 	private void drawPoint(Point p) {
-		gg.fill((Shape) new Rectangle2D.Double(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS));
+		//gg.fill((Shape) new Rectangle2D.Double(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS));
+		Stroke originalStroke = gg.getStroke();
+		RenderingHints orignalRenderingHints = gg.getRenderingHints();
+		gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		gg.fillOval(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS);
+		gg.setStroke(originalStroke);
+		gg.setRenderingHints(orignalRenderingHints);
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	
 	
 }

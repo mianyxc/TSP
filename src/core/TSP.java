@@ -19,6 +19,7 @@ public class TSP {
 	}
 	
 	public boolean add(int pointIndex) {
+		if(pointIndex == -1) return false;
 		return playerSolution.add(pointIndex);
 	}
 	

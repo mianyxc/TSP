@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
 
 //Settings类定义了程序中用到的常量
 public class Settings {
@@ -45,4 +46,7 @@ public class Settings {
 	
 	//最优路径颜色，森林绿
 	public static final Color OPTIMALROUTECOLOR = new Color(34, 139, 34);
+	
+	//字体
+	public static final Font font = new Font("微软雅黑", Font.BOLD, 13);
 }
