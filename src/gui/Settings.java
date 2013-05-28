@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.Color;
+
 //Settings类定义了程序中用到的常量
 public class Settings {
 	//各组件的形状大小
@@ -37,4 +39,10 @@ public class Settings {
 	
 	//点击时的判定半径
 	public static final double IDENTIFYRADIUS = 150;
+	
+	//画笔粗细
+	public static final int STROKEWIDTH = 3;
+	
+	//最优路径颜色，森林绿
+	public static final Color OPTIMALROUTECOLOR = new Color(34, 139, 34);
 }

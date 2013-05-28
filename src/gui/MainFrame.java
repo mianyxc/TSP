@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -166,7 +168,7 @@ public class MainFrame {
 	
 	public static void main(String[] args) {
 		new MainFrame();
-		//System.out.println(mainFrame.tsp.optimalSolution.totalCost);
+		//System.out.println("OK");
 	}
 	
 	private double format(double x, int n) {
