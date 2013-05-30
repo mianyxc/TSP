@@ -49,4 +49,12 @@ public class Settings {
 	
 	//字体
 	public static final Font font = new Font("微软雅黑", Font.BOLD, 13);
+	
+	//滑块取值范围
+	public static final int SLIDERMIN = POINTRADIUS;
+	public static final int SLIDERMAX = 500;
+	
+	//圆圈参数
+	public static final Color CIRCLECOLOR = Color.BLACK;
+	public static final int RADIUSINCREASEMENT = 5;
 }

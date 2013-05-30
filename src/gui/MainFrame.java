@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,6 +17,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import solver.CplexSolver;
 
@@ -29,6 +34,7 @@ public class MainFrame {
 	JComboBox<Integer> chooseNum;
 	JButton generate, showOptimal, rollback, clear;
 	JLabel optimalCost, playerCost, difference;
+	public JSlider slider;
 	
 	TSP tsp;
 	
@@ -58,7 +64,7 @@ public class MainFrame {
 		topPanel.add(rightPanel);
 		
 		//tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
-		gamePanel = new GraphicPanel();
+		gamePanel = new GraphicPanel(this);
 		rightPanel.add(gamePanel);
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
@@ -115,6 +121,15 @@ public class MainFrame {
 			}
 		});
 		
+		slider = new JSlider(Settings.SLIDERMIN, Settings.SLIDERMAX, Settings.SLIDERMIN);
+		leftPanel.add(slider);
+		slider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				gamePanel.repaint();
+			}
+		});
+		
 		infoPanel = new JPanel();
 		infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -146,6 +161,15 @@ public class MainFrame {
 				gamePanel.repaint();
 			}
 		});
+		gamePanel.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				slider.setValue(slider.getValue() + e.getUnitsToScroll() * Settings.RADIUSINCREASEMENT);
+				gamePanel.repaint();
+			}
+		});
+		
+		
 		tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
 		gamePanel.setTSP(tsp);
 		refreshInfo();

@@ -11,6 +11,7 @@ import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import core.Point;
@@ -20,17 +21,19 @@ public class GraphicPanel extends JPanel{
 	TSP tsp;
 	Graphics2D gg;
 	boolean showOptimal;
+	MainFrame mainFrame;
 	
-	public GraphicPanel(TSP tsp) {
+	public GraphicPanel(TSP tsp, MainFrame mainFrame) {
 		showOptimal = false;
 		this.tsp = tsp;
+		this.mainFrame = mainFrame;
 		setPreferredSize(new Dimension(Settings.GAME_WIDTH, Settings.GAME_HEIGHT));
 		setBackground(Color.WHITE);
 		repaint();
 	}
 	
-	public GraphicPanel() {
-		this(null);
+	public GraphicPanel(MainFrame mainFrame) {
+		this(null, mainFrame);
 	}
 	
 	public void setTSP(TSP tsp) {
@@ -51,7 +54,7 @@ public class GraphicPanel extends JPanel{
 		
 		if(tsp != null){
 			for(Point p: tsp.problem.points) {
-				drawPoint(p);
+				drawPoint(p, Color.BLACK);
 			}
 			if(showOptimal) {
 				System.out.println("Show optimal solution.");
@@ -68,7 +71,21 @@ public class GraphicPanel extends JPanel{
 				Point destination = tsp.problem.points[playerOrder.get(i + 1)];
 				drawLine(original, destination, Color.BLACK);
 			}
+			if(!playerOrder.isEmpty()) {
+				drawCircle(tsp.problem.points[playerOrder.get(playerOrder.size() - 1)], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
+			}
 		}
+	}
+	
+	private void drawCircle(Point p, int r, Color color) {
+		Stroke originalStroke = gg.getStroke();
+		RenderingHints orignalRenderingHints = gg.getRenderingHints();
+		//gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		gg.setColor(color);
+		gg.drawOval(p.x - r, p.y - r, 2 * r, 2 * r);
+		gg.setStroke(originalStroke);
+		gg.setRenderingHints(orignalRenderingHints);
 	}
 	
 	private void drawLine(Point original, Point destination, Color color) {
@@ -83,12 +100,13 @@ public class GraphicPanel extends JPanel{
 		gg.setRenderingHints(orignalRenderingHints);
 	}
 	
-	private void drawPoint(Point p) {
+	private void drawPoint(Point p, Color color) {
 		//gg.fill((Shape) new Rectangle2D.Double(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS));
 		Stroke originalStroke = gg.getStroke();
 		RenderingHints orignalRenderingHints = gg.getRenderingHints();
 		gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		gg.setColor(color);
 		gg.fillOval(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS);
 		gg.setStroke(originalStroke);
 		gg.setRenderingHints(orignalRenderingHints);
