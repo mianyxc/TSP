@@ -33,19 +33,26 @@ public class Settings {
 	public static final Integer[] alternativeNums = {10, 15, 20, 25, 30};
 	
 	//点的半径
-	public static final int POINTRADIUS = 4;
+	public static final int POINTRADIUS = 3;
+	
+	//点之间的最小距离
+	public static final int MINDISTANCE = 50;
 	
 	//边缘留空，防止点显示到屏幕外或显示不全
 	public static final int EDGE = 50;
 	
 	//点击时的判定半径
-	public static final double IDENTIFYRADIUS = 150;
+	public static final double IDENTIFYRADIUS = 50;
 	
 	//画笔粗细
 	public static final int STROKEWIDTH = 3;
+	public static final int OPTIMALSTROKEWIDTH = 7;
 	
-	//最优路径颜色，森林绿
-	public static final Color OPTIMALROUTECOLOR = new Color(34, 139, 34);
+	//玩家路径颜色
+	public static final Color ROUTECOLOR = new Color(0,0,0);
+	
+	//最优路径颜色
+	public static final Color OPTIMALROUTECOLOR = new Color(102,204,0);
 	
 	//字体
 	public static final Font font = new Font("微软雅黑", Font.BOLD, 13);

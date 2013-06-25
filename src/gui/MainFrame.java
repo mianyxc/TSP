@@ -164,7 +164,7 @@ public class MainFrame {
 		gamePanel.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				slider.setValue(slider.getValue() + e.getUnitsToScroll() * Settings.RADIUSINCREASEMENT);
+				slider.setValue(slider.getValue() - e.getUnitsToScroll() * Settings.RADIUSINCREASEMENT);
 				gamePanel.repaint();
 			}
 		});

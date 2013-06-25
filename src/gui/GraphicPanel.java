@@ -53,26 +53,26 @@ public class GraphicPanel extends JPanel{
 		
 		
 		if(tsp != null){
-			for(Point p: tsp.problem.points) {
-				drawPoint(p, Color.BLACK);
-			}
 			if(showOptimal) {
 				System.out.println("Show optimal solution.");
 				ArrayList<Integer> optimalOrder = tsp.optimalSolution.order;
 				for(int i = 0; i < optimalOrder.size() - 1; i++) {
 					Point original = tsp.problem.points[optimalOrder.get(i)];
 					Point destination = tsp.problem.points[optimalOrder.get(i + 1)];
-					drawLine(original, destination, Settings.OPTIMALROUTECOLOR);
+					drawLine(original, destination, Settings.OPTIMALROUTECOLOR, Settings.OPTIMALSTROKEWIDTH);
 				}
 			}
 			ArrayList<Integer> playerOrder = tsp.playerSolution.order;
 			for(int i = 0; i < playerOrder.size() - 1; i++) {
 				Point original = tsp.problem.points[playerOrder.get(i)];
 				Point destination = tsp.problem.points[playerOrder.get(i + 1)];
-				drawLine(original, destination, Color.BLACK);
+				drawLine(original, destination, Settings.ROUTECOLOR, Settings.STROKEWIDTH);
 			}
 			if(!playerOrder.isEmpty()) {
 				drawCircle(tsp.problem.points[playerOrder.get(playerOrder.size() - 1)], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
+			}
+			for(Point p: tsp.problem.points) {
+				drawPoint(p, Color.BLACK);
 			}
 		}
 	}
@@ -88,10 +88,10 @@ public class GraphicPanel extends JPanel{
 		gg.setRenderingHints(orignalRenderingHints);
 	}
 	
-	private void drawLine(Point original, Point destination, Color color) {
+	private void drawLine(Point original, Point destination, Color color, int width) {
 		Stroke originalStroke = gg.getStroke();
 		RenderingHints orignalRenderingHints = gg.getRenderingHints();
-		gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+		gg.setStroke(new BasicStroke(width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Shape line = new Line2D.Double(original.x, original.y, destination.x, destination.y);
 		gg.setColor(color);

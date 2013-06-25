@@ -19,10 +19,23 @@ public class Problem {
 	private void generatePoints(double xl, double xu, double yl, double yu) {
 		points = new Point[num];
 		for(int i = 0; i < num; i++) {
-			points[i] = new Point(xl, xu, yl, yu);
+			Point tempPoint;
+			do {
+				tempPoint = new Point(xl, xu, yl, yu);
+			} while (!checkDistance(i, tempPoint));
+			points[i] = tempPoint;
 		}
 	}
 	
+	private boolean checkDistance(int i, Point tempPoint) {
+		for(int j = 0; j < i; j++) {
+			if(getDistance(points[j], tempPoint) < Settings.MINDISTANCE) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	//计算点集中每两点之间的距离并存入距离矩阵
 	private void getDistanceMatrix() {
 		distance = new double[num][num];
