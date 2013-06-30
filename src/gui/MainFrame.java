@@ -41,24 +41,34 @@ public class MainFrame {
 	public MainFrame() {
 		frame = new JFrame("TSP");
 		frame.setSize(Settings.FRAME_WIDTH, Settings.FRAME_HEIGHT);
-		frame.setLayout(new BoxLayout(frame, BoxLayout.X_AXIS));
+		frame.setTitle("VRP Game");
+		frame.setLayout(null);
+		frame.setSize(new Dimension(Settings.FRAME_WIDTH, Settings.FRAME_HEIGHT));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 		
 		topPanel = (JPanel) frame.getContentPane();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-		topPanel.setSize(new Dimension(Settings.FRAME_WIDTH, Settings.FRAME_HEIGHT));
-		//topPanel.setBackground(Color.BLUE);
-		topPanel.setVisible(true);
+
+		JLabel titleLabel = new JLabel("车 辆 路 径 问 题");
+		titleLabel.setBounds(Settings.TITLE_X, Settings.TITLE_Y, Settings.TITLE_WIDTH, Settings.TITLE_HEIGHT);
+		titleLabel.setFont(Settings.TITLEFONT);
+		topPanel.add(titleLabel);
+		JLabel titleLabel2 = new JLabel("Vehicle Routing Problem");
+		titleLabel2.setBounds(Settings.TITLE2_X, Settings.TITLE2_Y, Settings.TITLE2_WIDTH, Settings.TITLE2_HEIGHT);
+		titleLabel2.setFont(Settings.TITLEFONT2);
+		topPanel.add(titleLabel2);
 		
 		leftPanel = new JPanel();
-		leftPanel.setPreferredSize(new Dimension(Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT));
+		leftPanel.setSize(new Dimension(Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT));
+		leftPanel.setBounds(Settings.LEFT_X, Settings.LEFT_Y, Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT);
 		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		//leftPanel.setBackground(Color.WHITE);
 		leftPanel.setVisible(true);
 		topPanel.add(leftPanel);
 		
 		rightPanel = new JPanel();
-		rightPanel.setPreferredSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
+		rightPanel.setSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
+		rightPanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
 		rightPanel.setBackground(Color.WHITE);
 		rightPanel.setVisible(true);
 		topPanel.add(rightPanel);
@@ -69,18 +79,18 @@ public class MainFrame {
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
+		generate = new JButton("生成问题");
 		numControl = new JPanel();
 		numControl.setPreferredSize(new Dimension(Settings.LEFT_WIDTH, Settings.CONTROLPANEL_HEIGHT));
 		numControl.add(new JLabel("选择问题规模"));
 		numControl.add(chooseNum);
+		numControl.add(generate);
 		leftPanel.add(numControl);
 		for(Component c: numControl.getComponents()) {
 			c.setFont(Settings.font);
 		}
 		
-		generate = new JButton("生成问题");
-		leftPanel.add(generate);
-		generate.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
+		
 		generate.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
 				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
@@ -91,7 +101,7 @@ public class MainFrame {
 		
 		showOptimal = new JButton("显示/隐藏最优路径");
 		//showOptimal.setFont(Settings.font);
-		showOptimal.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
+		showOptimal.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH*2+5, Settings.BUTTON_HEIGHT));
 		leftPanel.add(showOptimal);
 		showOptimal.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
@@ -131,7 +141,7 @@ public class MainFrame {
 		});
 		
 		infoPanel = new JPanel();
-		infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
+		//infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		//infoPanel.setBackground(Color.CYAN);
 		infoPanel.setVisible(true);
@@ -198,8 +208,8 @@ public class MainFrame {
 	}
 	
 	public void refreshInfo() {
-		optimalCost.setText("最优解：" + format(tsp.optimalSolution.totalCost, 2));
-		playerCost.setText("当前解：" + format(tsp.playerSolution.totalCost, 2));
+		optimalCost.setText("最优路径长度：" + format(tsp.optimalSolution.totalCost, 2));
+		playerCost.setText("当前路径长度：" + format(tsp.playerSolution.totalCost, 2));
 		difference.setText("百分比：" + format(tsp.playerSolution.totalCost / tsp.optimalSolution.totalCost * 100, 2) + "%");
 	}
 	

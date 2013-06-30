@@ -54,7 +54,7 @@ public class GraphicPanel extends JPanel{
 		
 		if(tsp != null){
 			if(showOptimal) {
-				System.out.println("Show optimal solution.");
+				//System.out.println("Show optimal solution.");
 				ArrayList<Integer> optimalOrder = tsp.optimalSolution.order;
 				for(int i = 0; i < optimalOrder.size() - 1; i++) {
 					Point original = tsp.problem.points[optimalOrder.get(i)];
