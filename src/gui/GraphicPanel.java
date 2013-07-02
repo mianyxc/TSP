@@ -9,23 +9,25 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import core.Point;
-import core.TSP;
+import core.VRPPoint;
+import core.VRPGame;
 
 public class GraphicPanel extends JPanel{
-	TSP tsp;
+	VRPGame vrp;
 	Graphics2D gg;
-	boolean showOptimal;
+	boolean showOptimal, showDemand;
 	MainFrame mainFrame;
 	
-	public GraphicPanel(TSP tsp, MainFrame mainFrame) {
+	public GraphicPanel(VRPGame vrp, MainFrame mainFrame) {
 		showOptimal = false;
-		this.tsp = tsp;
+		showDemand = true;
+		this.vrp = vrp;
 		this.mainFrame = mainFrame;
 		setPreferredSize(new Dimension(Settings.GAME_WIDTH, Settings.GAME_HEIGHT));
 		setBackground(Color.WHITE);
@@ -36,13 +38,18 @@ public class GraphicPanel extends JPanel{
 		this(null, mainFrame);
 	}
 	
-	public void setTSP(TSP tsp) {
-		this.tsp = tsp;
+	public void setVRP(VRPGame vrp) {
+		this.vrp = vrp;
 		repaint();
 	}
 	
 	public void toggleShowOptimal() {
 		showOptimal = !showOptimal;
+		repaint();
+	}
+	
+	public void toggleShowDemand() {
+		showDemand = !showDemand;
 		repaint();
 	}
 	
@@ -52,32 +59,55 @@ public class GraphicPanel extends JPanel{
 		gg = (Graphics2D) g;
 		
 		
-		if(tsp != null){
+		if(vrp != null){
 			if(showOptimal) {
-				//System.out.println("Show optimal solution.");
-				ArrayList<Integer> optimalOrder = tsp.optimalSolution.order;
-				for(int i = 0; i < optimalOrder.size() - 1; i++) {
-					Point original = tsp.problem.points[optimalOrder.get(i)];
-					Point destination = tsp.problem.points[optimalOrder.get(i + 1)];
-					drawLine(original, destination, Settings.OPTIMALROUTECOLOR, Settings.OPTIMALSTROKEWIDTH);
+				for(int i = 0; i < vrp.info.num + 2; i++) {
+					for(int j = 0; j < vrp.info.num + 2; j++) {
+						if(vrp.optimalSolution.x[i][j]) {
+							drawLine(vrp.info.points[i], vrp.info.points[j], Settings.OPTIMALROUTECOLOR, Settings.OPTIMALSTROKEWIDTH);
+						}
+					}
 				}
 			}
-			ArrayList<Integer> playerOrder = tsp.playerSolution.order;
-			for(int i = 0; i < playerOrder.size() - 1; i++) {
-				Point original = tsp.problem.points[playerOrder.get(i)];
-				Point destination = tsp.problem.points[playerOrder.get(i + 1)];
-				drawLine(original, destination, Settings.ROUTECOLOR, Settings.STROKEWIDTH);
+			for(int i = 0; i < vrp.info.num + 2; i++) {
+				for(int j = 0; j < vrp.info.num + 2; j++) {
+					if(vrp.playerSolution.x[i][j]) {
+						drawLine(vrp.info.points[i], vrp.info.points[j], Settings.ROUTECOLOR, Settings.STROKEWIDTH);
+					}
+				}
 			}
-			if(!playerOrder.isEmpty()) {
-				drawCircle(tsp.problem.points[playerOrder.get(playerOrder.size() - 1)], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
+			if(!vrp.playerSolution.addOrder.isEmpty()) {
+				drawCircle(vrp.info.points[vrp.playerSolution.addOrder.get(vrp.playerSolution.addOrder.size()-1).j], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
 			}
-			for(Point p: tsp.problem.points) {
-				drawPoint(p, Color.BLACK);
+			for(int i = 1; i < vrp.info.num + 1; i++) {
+				drawPoint(vrp.info.points[i], Settings.POINTRADIUS, Color.BLACK);
+				if(showDemand) {
+					String demand = String.valueOf(vrp.info.points[i].demand);
+					drawLabel(vrp.info.points[i], demand, Color.BLACK);
+				}
 			}
+			drawPoint(vrp.info.points[0], Settings.POINTRADIUS, Color.RED);
 		}
 	}
 	
-	private void drawCircle(Point p, int r, Color color) {
+	private void drawLabel(VRPPoint p, String demand, Color black) {
+		gg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		gg.drawString(demand, p.x + Settings.XBIASE, p.y + Settings.YBIASE);
+	}
+
+	private void drawSquare(VRPPoint p, int a, Color color) {
+		Rectangle2D.Double rect = new Rectangle2D.Double(p.x - a/2, p.y - a/2, a, a);
+		Stroke originalStroke = gg.getStroke();
+		RenderingHints orignalRenderingHints = gg.getRenderingHints();
+		gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		gg.setColor(color);
+		gg.fill(rect);
+		gg.setStroke(originalStroke);
+		gg.setRenderingHints(orignalRenderingHints);
+	}
+	
+	private void drawCircle(VRPPoint p, int r, Color color) {
 		Stroke originalStroke = gg.getStroke();
 		RenderingHints orignalRenderingHints = gg.getRenderingHints();
 		//gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
@@ -88,7 +118,7 @@ public class GraphicPanel extends JPanel{
 		gg.setRenderingHints(orignalRenderingHints);
 	}
 	
-	private void drawLine(Point original, Point destination, Color color, int width) {
+	private void drawLine(VRPPoint original, VRPPoint destination, Color color, int width) {
 		Stroke originalStroke = gg.getStroke();
 		RenderingHints orignalRenderingHints = gg.getRenderingHints();
 		gg.setStroke(new BasicStroke(width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
@@ -100,14 +130,13 @@ public class GraphicPanel extends JPanel{
 		gg.setRenderingHints(orignalRenderingHints);
 	}
 	
-	private void drawPoint(Point p, Color color) {
-		//gg.fill((Shape) new Rectangle2D.Double(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS));
+	private void drawPoint(VRPPoint p, int r, Color color) {
 		Stroke originalStroke = gg.getStroke();
 		RenderingHints orignalRenderingHints = gg.getRenderingHints();
 		gg.setStroke(new BasicStroke(Settings.STROKEWIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 		gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gg.setColor(color);
-		gg.fillOval(p.x - Settings.POINTRADIUS, p.y - Settings.POINTRADIUS, 2 * Settings.POINTRADIUS, 2 * Settings.POINTRADIUS);
+		gg.fillOval(p.x - r, p.y - r, 2 * r, 2 * r);
 		gg.setStroke(originalStroke);
 		gg.setRenderingHints(orignalRenderingHints);
 	}

@@ -21,25 +21,28 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import solver.CplexSolver;
+import solver.TSPSolver;
 
-import core.Point;
-import core.TSP;
+import core.VRPPoint;
+import core.VRPGame;
 
 //程序主界面
 public class MainFrame {
 	JFrame frame;
-	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl;
+	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl, generatePanel;
 	GraphicPanel gamePanel;
-	JComboBox<Integer> chooseNum;
-	JButton generate, showOptimal, rollback, clear;
-	JLabel optimalCost, playerCost, difference;
+	JComboBox<Integer> chooseNum, chooseVehicle;
+	JButton generate, showOptimal, showDemand, rollback, clear;
+	JLabel optimalCost, playerCost, difference, capacity, vehicle;
 	public JSlider slider;
+	public int vehicleUsed;
+	public int currentCapacity;
+	public int currentIndex;
 	
-	TSP tsp;
+	VRPGame vrp;
 	
 	public MainFrame() {
-		frame = new JFrame("TSP");
+		frame = new JFrame("VRP");
 		frame.setSize(Settings.FRAME_WIDTH, Settings.FRAME_HEIGHT);
 		frame.setTitle("VRP Game");
 		frame.setLayout(null);
@@ -79,13 +82,21 @@ public class MainFrame {
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
-		generate = new JButton("生成问题");
+		chooseVehicle = new JComboBox<Integer>(Settings.alternativeVehicles);
+		chooseVehicle.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
+		generate = new JButton("<html>生成<br />问题</html>");
+		generate.setFont(Settings.font);
+		generate.setPreferredSize(new Dimension(62, 47));
 		numControl = new JPanel();
-		numControl.setPreferredSize(new Dimension(Settings.LEFT_WIDTH, Settings.CONTROLPANEL_HEIGHT));
-		numControl.add(new JLabel("选择问题规模"));
+		numControl.setPreferredSize(new Dimension(Settings.LEFT_WIDTH/2, Settings.CONTROLPANEL_HEIGHT));
+		numControl.add(new JLabel("选择客户总数"));
 		numControl.add(chooseNum);
-		numControl.add(generate);
-		leftPanel.add(numControl);
+		numControl.add(new JLabel("选择车辆总数"));
+		numControl.add(chooseVehicle);
+		generatePanel = new JPanel();
+		generatePanel.add(numControl);
+		generatePanel.add(generate);
+		leftPanel.add(generatePanel);
 		for(Component c: numControl.getComponents()) {
 			c.setFont(Settings.font);
 		}
@@ -93,14 +104,16 @@ public class MainFrame {
 		
 		generate.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
-				gamePanel.setTSP(tsp);
+				vrp = new VRPGame((int) chooseNum.getSelectedItem(),(int) chooseVehicle.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE, Settings.DEMAND_MIN, Settings.DEMAND_MAX);
+				gamePanel.setVRP(vrp);
+				currentIndex = 0;
+				vehicleUsed = 0;
+				currentCapacity = vrp.info.capacity;
 				refreshInfo();
 			}
 		});
 		
 		showOptimal = new JButton("显示/隐藏最优路径");
-		//showOptimal.setFont(Settings.font);
 		showOptimal.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH*2+5, Settings.BUTTON_HEIGHT));
 		leftPanel.add(showOptimal);
 		showOptimal.addMouseListener(new MouseAdapter(){
@@ -109,12 +122,21 @@ public class MainFrame {
 			}
 		});
 		
+		showDemand = new JButton("显示/隐藏客户需求");
+		showDemand.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH*2+5, Settings.BUTTON_HEIGHT));
+		leftPanel.add(showDemand);
+		showDemand.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				gamePanel.toggleShowDemand();
+			}
+		});
+		
 		rollback = new JButton("撤销一步");
 		rollback.setPreferredSize(new Dimension(Settings.BUTTON_WIDTH, Settings.BUTTON_HEIGHT));
 		leftPanel.add(rollback);
 		rollback.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				tsp.remove();
+				vrp.remove();
 				refreshInfo();
 				gamePanel.repaint();
 			}
@@ -125,7 +147,10 @@ public class MainFrame {
 		leftPanel.add(clear);
 		clear.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				tsp.removeAll();
+				vrp.removeAll();
+				currentIndex = 0;
+				currentCapacity = vrp.info.capacity;
+				vehicleUsed = 0;
 				refreshInfo();
 				gamePanel.repaint();
 			}
@@ -146,9 +171,13 @@ public class MainFrame {
 		//infoPanel.setBackground(Color.CYAN);
 		infoPanel.setVisible(true);
 		leftPanel.add(infoPanel);
+		capacity = new JLabel();
+		vehicle = new JLabel();
 		optimalCost = new JLabel();
 		playerCost = new JLabel();
 		difference = new JLabel();
+		infoPanel.add(capacity);
+		infoPanel.add(vehicle);
 		infoPanel.add(optimalCost);
 		infoPanel.add(playerCost);
 		infoPanel.add(difference);
@@ -162,10 +191,35 @@ public class MainFrame {
 				if(e.getButton() == MouseEvent.BUTTON1) {
 					double x = e.getX();
 					double y = e.getY();
-					tsp.add(findPoint(x, y));
+					int clickedIndex = findIndex(x,y);
+					if(clickedIndex != -1 && clickedIndex != currentIndex) {
+						if(currentCapacity >= vrp.info.points[clickedIndex].demand) {
+							if(vrp.add(currentIndex, clickedIndex)) {
+								if(currentIndex == 0) {
+									vehicleUsed++;
+								}
+								currentCapacity -= vrp.info.points[clickedIndex].demand;
+								currentIndex = clickedIndex;
+								if(currentIndex == 0) {
+									currentCapacity = vrp.info.capacity;
+								}
+							}
+						}
+					}
 				}
 				if(e.getButton() == MouseEvent.BUTTON3) {
-					tsp.remove();
+					int backIndex = vrp.remove();
+					if(backIndex != -1) {
+						currentCapacity += vrp.info.points[currentIndex].demand;
+						if(currentIndex == 0) {
+							currentCapacity = getCapacity();
+						}
+						currentIndex = backIndex;
+						if(backIndex == 0) {
+							currentCapacity = vrp.info.capacity;
+							vehicleUsed--;
+						}
+					}
 				}
 				refreshInfo();
 				gamePanel.repaint();
@@ -180,8 +234,12 @@ public class MainFrame {
 		});
 		
 		
-		tsp = new TSP((int) chooseNum.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE);
-		gamePanel.setTSP(tsp);
+		vrp = new VRPGame((int) chooseNum.getSelectedItem(),(int) chooseVehicle.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE, Settings.DEMAND_MIN, Settings.DEMAND_MAX);
+		//vrp = new VRPGame(30,3, Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE,1,5);
+		gamePanel.setVRP(vrp);
+		currentIndex = 0;
+		vehicleUsed = 0;
+		currentCapacity = vrp.info.capacity;
 		refreshInfo();
 		
 		for(Component c: leftPanel.getComponents()) {
@@ -191,26 +249,41 @@ public class MainFrame {
 		frame.setVisible(true);
 	}
 	
-	private int findPoint(double x, double y) {
+	private int getCapacity() {
+		int c = vrp.info.capacity;
+		int i = vrp.playerSolution.addOrder.size();
+		do {
+			i--;
+			c -= vrp.info.points[vrp.playerSolution.addOrder.get(i).j].demand;
+		} while(vrp.playerSolution.addOrder.get(i).i != 0);
+		return c;
+	}
+
+	private int findIndex(double x, double y) {
 		double min = Settings.IDENTIFYRADIUS;
 		int minIndex = -1;
-		Point[] points = tsp.problem.points;
-		for(int i = 0; i < tsp.problem.num; i++) {
-			Point p = points[i];
+		VRPPoint[] points = vrp.info.points;
+		for(int i = 0; i < vrp.info.num + 1; i++) {
+			VRPPoint p = points[i];
 			double distance = Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2));
 			if(distance < min) {
 				min = distance;
 				minIndex = i;
 			}
 		}
-		//System.out.println(minIndex);
-		return minIndex;
+		if(min == Settings.IDENTIFYRADIUS) {
+			return -1;
+		} else {
+			return minIndex;
+		}
 	}
 	
 	public void refreshInfo() {
-		optimalCost.setText("最优路径长度：" + format(tsp.optimalSolution.totalCost, 2));
-		playerCost.setText("当前路径长度：" + format(tsp.playerSolution.totalCost, 2));
-		difference.setText("百分比：" + format(tsp.playerSolution.totalCost / tsp.optimalSolution.totalCost * 100, 2) + "%");
+		capacity.setText("剩余容量：" + currentCapacity);
+		vehicle.setText("已使用车辆数：" + vehicleUsed);
+		optimalCost.setText("最优路径长度：" + format(vrp.optimalSolution.totalCost, 2));
+		playerCost.setText("当前路径长度：" + format(vrp.playerSolution.totalCost, 2));
+		difference.setText("百分比：" + format(vrp.playerSolution.totalCost / vrp.optimalSolution.totalCost * 100, 2) + "%");
 	}
 	
 	public static void main(String[] args) {

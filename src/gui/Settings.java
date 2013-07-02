@@ -39,13 +39,18 @@ public class Settings {
 	//选择框
 	public static final int COMBOBOX_WIDTH = 50;
 	public static final int COMBOBOX_HEIGHT = 20;
-	public static final int CONTROLPANEL_HEIGHT = 40;
+	public static final int CONTROLPANEL_HEIGHT = 60;
 	//按钮
 	public static final int BUTTON_HEIGHT = 25;
 	public static final int BUTTON_WIDTH = 100;
 	
 	//可选的问题规模
-	public static final Integer[] alternativeNums = {10, 15, 20, 25, 30};
+	public static final Integer[] alternativeNums = {10, 15, 20, 25, 30, 35};
+	public static final Integer[] alternativeVehicles = {1, 2, 3, 4, 5};
+	
+	//需求上下限
+	public static final int DEMAND_MAX = 5;
+	public static final int DEMAND_MIN = 1;
 	
 	//点的半径
 	public static final int POINTRADIUS = 3;
@@ -79,4 +84,8 @@ public class Settings {
 	//圆圈参数
 	public static final Color CIRCLECOLOR = Color.BLACK;
 	public static final int RADIUSINCREASEMENT = 3;
+	
+	//需求标签偏移
+	public static final int XBIASE = 5;
+	public static final int YBIASE = 0;
 }

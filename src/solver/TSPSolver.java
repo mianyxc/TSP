@@ -95,9 +95,9 @@ package solver;
 import ilog.concert.*;
 import ilog.cplex.*;
 
-public class CplexSolver {
+public class TSPSolver {
 	public int[] order;
-	public CplexSolver(int nodeNum, double[][] distance) {
+	public TSPSolver(int nodeNum, double[][] distance) {
 		try {
 			IloCplex cplex = new IloCplex();
 
