@@ -76,9 +76,7 @@ public class GraphicPanel extends JPanel{
 					}
 				}
 			}
-			if(!vrp.playerSolution.addOrder.isEmpty()) {
-				drawCircle(vrp.info.points[vrp.playerSolution.addOrder.get(vrp.playerSolution.addOrder.size()-1).j], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
-			}
+			drawCircle(vrp.info.points[mainFrame.currentIndex], mainFrame.slider.getValue(), Settings.CIRCLECOLOR);
 			for(int i = 1; i < vrp.info.num + 1; i++) {
 				drawPoint(vrp.info.points[i], Settings.POINTRADIUS, Color.BLACK);
 				if(showDemand) {

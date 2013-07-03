@@ -3,15 +3,16 @@ package gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -20,8 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import solver.TSPSolver;
 
 import core.VRPPoint;
 import core.VRPGame;
@@ -33,7 +32,7 @@ public class MainFrame {
 	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum, chooseVehicle;
 	JButton generate, showOptimal, showDemand, rollback, clear;
-	JLabel optimalCost, playerCost, difference, capacity, vehicle;
+	JLabel optimalCost, playerCost, difference, capacity, vehicle, logo1;
 	public JSlider slider;
 	public int vehicleUsed;
 	public int currentCapacity;
@@ -51,6 +50,8 @@ public class MainFrame {
 		frame.setVisible(true);
 		
 		topPanel = (JPanel) frame.getContentPane();
+		
+		topPanel.setBackground(Color.WHITE);
 
 		JLabel titleLabel = new JLabel("车 辆 路 径 问 题");
 		titleLabel.setBounds(Settings.TITLE_X, Settings.TITLE_Y, Settings.TITLE_WIDTH, Settings.TITLE_HEIGHT);
@@ -62,23 +63,28 @@ public class MainFrame {
 		topPanel.add(titleLabel2);
 		
 		leftPanel = new JPanel();
+		leftPanel.setBackground(Color.WHITE);
 		leftPanel.setSize(new Dimension(Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT));
 		leftPanel.setBounds(Settings.LEFT_X, Settings.LEFT_Y, Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT);
 		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		//leftPanel.setBackground(Color.WHITE);
 		leftPanel.setVisible(true);
+		leftPanel.setBorder(BorderFactory.createEtchedBorder());
 		topPanel.add(leftPanel);
 		
-		rightPanel = new JPanel();
-		rightPanel.setSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
-		rightPanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
-		rightPanel.setBackground(Color.WHITE);
-		rightPanel.setVisible(true);
-		topPanel.add(rightPanel);
+		//rightPanel = new JPanel();
+		//rightPanel.setSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
+		//rightPanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
+		//rightPanel.setBackground(Color.WHITE);
+		//rightPanel.setVisible(true);
+		//topPanel.add(rightPanel);
 		
 		//tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
 		gamePanel = new GraphicPanel(this);
-		rightPanel.add(gamePanel);
+		gamePanel.setBorder(BorderFactory.createEtchedBorder());
+		gamePanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
+		topPanel.add(gamePanel);
+		//rightPanel.add(gamePanel);
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
@@ -99,6 +105,12 @@ public class MainFrame {
 		leftPanel.add(generatePanel);
 		for(Component c: numControl.getComponents()) {
 			c.setFont(Settings.font);
+			c.setBackground(Color.WHITE);
+			c.setFocusable(false);
+		}
+		for(Component c: generatePanel.getComponents()) {
+			c.setBackground(Color.WHITE);
+			c.setFocusable(false);
 		}
 		
 		
@@ -165,6 +177,17 @@ public class MainFrame {
 			}
 		});
 		
+		JPanel tempPanel = new JPanel();
+		tempPanel.setPreferredSize(new Dimension(Settings.LEFT_WIDTH-10, 50));
+		leftPanel.add(tempPanel);
+		/*
+		ImageIcon icon = new ImageIcon(getClass().getResource("/images/logo2.png"));
+		icon.setImage(icon.getImage().getScaledInstance(Settings.LOGOWIDTH_1,Settings.LOGOWIDTH_1*icon.getIconHeight()/icon.getIconWidth(),Image.SCALE_DEFAULT));
+		logo1 = new JLabel();
+		logo1.setIcon(icon);
+		leftPanel.add(logo1);
+		*/
+		
 		infoPanel = new JPanel();
 		//infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -185,6 +208,17 @@ public class MainFrame {
 			c.setFont(Settings.font);
 		}
 		
+		JPanel tempPanel2 = new JPanel();
+		tempPanel2.setPreferredSize(new Dimension(Settings.LEFT_WIDTH-10, 100));
+		leftPanel.add(tempPanel2);
+		
+		ImageIcon icon2 = new ImageIcon(getClass().getResource("/images/logo1.png"));
+		icon2.setImage(icon2.getImage().getScaledInstance(Settings.LOGOWIDTH_2,Settings.LOGOWIDTH_2*icon2.getIconHeight()/icon2.getIconWidth(),Image.SCALE_DEFAULT));
+		JLabel logo2 = new JLabel();
+		logo2.setIcon(icon2);
+		leftPanel.add(logo2);
+		
+		
 		gamePanel.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				//System.out.println("Mouse clicked.");
@@ -193,12 +227,15 @@ public class MainFrame {
 					double y = e.getY();
 					int clickedIndex = findIndex(x,y);
 					if(clickedIndex != -1 && clickedIndex != currentIndex) {
-						if(currentCapacity >= vrp.info.points[clickedIndex].demand) {
+						if(currentCapacity >= vrp.info.points[clickedIndex].demand || vrp.info.points[clickedIndex].isSatisfied) {
+							boolean flag = vrp.info.points[clickedIndex].isSatisfied;
 							if(vrp.add(currentIndex, clickedIndex)) {
 								if(currentIndex == 0) {
 									vehicleUsed++;
 								}
-								currentCapacity -= vrp.info.points[clickedIndex].demand;
+								if(!flag) {
+									currentCapacity -= vrp.info.points[clickedIndex].demand;
+								}
 								currentIndex = clickedIndex;
 								if(currentIndex == 0) {
 									currentCapacity = vrp.info.capacity;
@@ -233,6 +270,12 @@ public class MainFrame {
 			}
 		});
 		
+		for(Component c: leftPanel.getComponents()) {
+			c.setBackground(Color.WHITE);
+		}
+		
+
+		
 		
 		vrp = new VRPGame((int) chooseNum.getSelectedItem(),(int) chooseVehicle.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE, Settings.DEMAND_MIN, Settings.DEMAND_MAX);
 		//vrp = new VRPGame(30,3, Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE,1,5);
@@ -244,6 +287,7 @@ public class MainFrame {
 		
 		for(Component c: leftPanel.getComponents()) {
 			c.setFont(Settings.font);
+			c.setFocusable(false);
 		}
 		
 		frame.setVisible(true);

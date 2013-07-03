@@ -27,8 +27,8 @@ public class VRPInfo {
 			totalDemand += demand[i];
 		}
 		int capacity = ((totalDemand/vehicleNum+1)/5+1)*5;
-		System.out.println(totalDemand);
-		System.out.println(capacity);
+		//System.out.println(totalDemand);
+		//System.out.println(capacity);
 		return capacity;
 	}
 
@@ -43,7 +43,9 @@ public class VRPInfo {
 	//随机生成点集
 	private void generatePoints(int xl, int xu, int yl, int yu, int dl, int du) {
 		points = new VRPPoint[num+2];
-		VRPPoint depot = new VRPPoint(Settings.GAME_WIDTH/2, Settings.GAME_HEIGHT/2);
+		//如果要求depot在中心，就用注释掉的那一句
+		//VRPPoint depot = new VRPPoint(Settings.GAME_WIDTH/2, Settings.GAME_HEIGHT/2);
+		VRPPoint depot = new VRPPoint(xl, xu, yl, yu, 0, 0);
 		points[0] = depot;
 		for(int i = 1; i < num+1; i++) {
 			VRPPoint tempPoint;

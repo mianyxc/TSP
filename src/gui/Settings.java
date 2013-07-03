@@ -21,9 +21,9 @@ public class Settings {
 	public static final int TITLE2_HEIGHT = 50;
 	public static final Font TITLEFONT2 = new Font("Helvetica", Font.PLAIN, 20);
 	//左面板
-	public static final int LEFT_X = 0;
+	public static final int LEFT_X = 20;
 	public static final int LEFT_Y = 100;
-	public static final int LEFT_WIDTH = 300;
+	public static final int LEFT_WIDTH = 280;
 	public static final int LEFT_HEIGHT = 500;
 	//右面板
 	public static final int RIGHT_X = 300;
@@ -37,7 +37,7 @@ public class Settings {
 	public static final int INFO_WIDTH = 300;
 	public static final int INFO_HEIGHT = 200;
 	//选择框
-	public static final int COMBOBOX_WIDTH = 50;
+	public static final int COMBOBOX_WIDTH = 45;
 	public static final int COMBOBOX_HEIGHT = 20;
 	public static final int CONTROLPANEL_HEIGHT = 60;
 	//按钮
@@ -78,7 +78,7 @@ public class Settings {
 	public static final Font font = new Font("微软雅黑", Font.PLAIN, 14);
 	
 	//滑块取值范围
-	public static final int SLIDERMIN = POINTRADIUS;
+	public static final int SLIDERMIN = 0;
 	public static final int SLIDERMAX = 400;
 	
 	//圆圈参数
@@ -88,4 +88,8 @@ public class Settings {
 	//需求标签偏移
 	public static final int XBIASE = 5;
 	public static final int YBIASE = 0;
+	
+	//LOGO
+	public static final int LOGOWIDTH_1 = 70;
+	public static final int LOGOWIDTH_2 = 250;
 }
