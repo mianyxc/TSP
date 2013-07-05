@@ -11,7 +11,6 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,7 +27,7 @@ import core.VRPGame;
 //程序主界面
 public class MainFrame {
 	JFrame frame;
-	JPanel topPanel, leftPanel, rightPanel, infoPanel, numControl, generatePanel;
+	JPanel topPanel, leftPanel, infoPanel, numControl, generatePanel;
 	GraphicPanel gamePanel;
 	JComboBox<Integer> chooseNum, chooseVehicle;
 	JButton generate, showOptimal, showDemand, rollback, clear;
@@ -66,25 +65,13 @@ public class MainFrame {
 		leftPanel.setBackground(Color.WHITE);
 		leftPanel.setSize(new Dimension(Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT));
 		leftPanel.setBounds(Settings.LEFT_X, Settings.LEFT_Y, Settings.LEFT_WIDTH, Settings.LEFT_HEIGHT);
-		//leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		//leftPanel.setBackground(Color.WHITE);
 		leftPanel.setVisible(true);
 		leftPanel.setBorder(BorderFactory.createEtchedBorder());
 		topPanel.add(leftPanel);
-		
-		//rightPanel = new JPanel();
-		//rightPanel.setSize(new Dimension(Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT));
-		//rightPanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
-		//rightPanel.setBackground(Color.WHITE);
-		//rightPanel.setVisible(true);
-		//topPanel.add(rightPanel);
-		
-		//tsp = new TSP(25, 0, (double)Settings.GAME_WIDTH, 0, (double)Settings.GAME_HEIGHT);
 		gamePanel = new GraphicPanel(this);
 		gamePanel.setBorder(BorderFactory.createEtchedBorder());
 		gamePanel.setBounds(Settings.RIGHT_X, Settings.RIGHT_Y, Settings.RIGHT_WIDTH, Settings.RIGHT_HEIGHT);
 		topPanel.add(gamePanel);
-		//rightPanel.add(gamePanel);
 		
 		chooseNum = new JComboBox<Integer>(Settings.alternativeNums);
 		chooseNum.setPreferredSize(new Dimension(Settings.COMBOBOX_WIDTH, Settings.COMBOBOX_HEIGHT));
@@ -148,7 +135,18 @@ public class MainFrame {
 		leftPanel.add(rollback);
 		rollback.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
-				vrp.remove();
+				int backIndex = vrp.remove();
+				if(backIndex != -1) {
+					currentCapacity += vrp.info.points[currentIndex].demand;
+					if(currentIndex == 0) {
+						currentCapacity = getCapacity();
+					}
+					currentIndex = backIndex;
+					if(backIndex == 0) {
+						currentCapacity = vrp.info.capacity;
+						vehicleUsed--;
+					}
+				}
 				refreshInfo();
 				gamePanel.repaint();
 			}
@@ -189,9 +187,7 @@ public class MainFrame {
 		*/
 		
 		infoPanel = new JPanel();
-		//infoPanel.setPreferredSize(new Dimension(Settings.INFO_WIDTH, Settings.INFO_HEIGHT));
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		//infoPanel.setBackground(Color.CYAN);
 		infoPanel.setVisible(true);
 		leftPanel.add(infoPanel);
 		capacity = new JLabel();
@@ -221,7 +217,6 @@ public class MainFrame {
 		
 		gamePanel.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				//System.out.println("Mouse clicked.");
 				if(e.getButton() == MouseEvent.BUTTON1) {
 					double x = e.getX();
 					double y = e.getY();
@@ -278,7 +273,6 @@ public class MainFrame {
 		
 		
 		vrp = new VRPGame((int) chooseNum.getSelectedItem(),(int) chooseVehicle.getSelectedItem(), Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE, Settings.DEMAND_MIN, Settings.DEMAND_MAX);
-		//vrp = new VRPGame(30,3, Settings.EDGE, Settings.GAME_WIDTH - Settings.EDGE, Settings.EDGE, Settings.GAME_HEIGHT - Settings.EDGE,1,5);
 		gamePanel.setVRP(vrp);
 		currentIndex = 0;
 		vehicleUsed = 0;
@@ -332,7 +326,6 @@ public class MainFrame {
 	
 	public static void main(String[] args) {
 		new MainFrame();
-		//System.out.println("OK");
 	}
 	
 	private double format(double x, int n) {

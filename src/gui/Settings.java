@@ -34,8 +34,8 @@ public class Settings {
 	public static final int GAME_WIDTH = 500;
 	public static final int GAME_HEIGHT = 500;
 	//数据显示区
-	public static final int INFO_WIDTH = 300;
-	public static final int INFO_HEIGHT = 200;
+	//public static final int INFO_WIDTH = 300;
+	//public static final int INFO_HEIGHT = 200;
 	//选择框
 	public static final int COMBOBOX_WIDTH = 45;
 	public static final int COMBOBOX_HEIGHT = 20;

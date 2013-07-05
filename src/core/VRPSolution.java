@@ -59,7 +59,6 @@ public class VRPSolution {
 			addOrder.add(new Pair(i,j));
 			refreshSatisfied();
 			refreshCost();
-			System.out.println(problem.points[j].isSatisfied);
 			return true;
 		} else {
 			return false;

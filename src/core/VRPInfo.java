@@ -27,8 +27,6 @@ public class VRPInfo {
 			totalDemand += demand[i];
 		}
 		int capacity = ((totalDemand/vehicleNum+1)/5+1)*5;
-		//System.out.println(totalDemand);
-		//System.out.println(capacity);
 		return capacity;
 	}
 
@@ -36,7 +34,6 @@ public class VRPInfo {
 		demand = new double[num+2];
 		for(int i = 0; i < num+2; i++) {
 			demand[i] = points[i].demand;
-			System.out.println(demand[i]);
 		}
 	}
 
